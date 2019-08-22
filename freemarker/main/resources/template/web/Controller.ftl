@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
 import top.lemna.common.utils.BeanUtils;
 import ${classPath}.persistence.domain.${domain};
 import ${classPath}.persistence.service.${domain}Service;
@@ -25,9 +26,8 @@ import ${classPath}.web.command.${domain}EditCommand;
 import ${classPath}.web.command.${domain}QueryCommand;
 import ${classPath}.web.specification.${domain}Specification;
 
-
+@Slf4j
 @RestController
-
 @RequestMapping("/${artifact}/${domain}")
 public class ${domain}Controller {
 
@@ -36,6 +36,7 @@ public class ${domain}Controller {
 
   @GetMapping("{id}")
   public ${domain} get(@PathVariable("id") Long id) {
+    log.info("${domain} 查询 id:{}", id);
     return service.findById(id);
   }
 
@@ -44,12 +45,14 @@ public class ${domain}Controller {
       @Valid ${domain}QueryCommand command, //
       @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable //
   ) {
+    log.info("${domain} 查询 command:{}, pageable:{}", command, pageable);
     ${domain}Specification specification = new ${domain}Specification(command);
     return service.findAll(specification, pageable);
   }
     
   @PostMapping
   public ${domain} add(@RequestBody @Valid ${domain}AddCommand command) {
+    log.info("${domain} 新增 command:{}", command);
     ${domain} entity = new ${domain}();
     BeanUtils.copyPropertiesIgnoreNull(command, entity);
     return service.save(entity);
@@ -57,6 +60,7 @@ public class ${domain}Controller {
   
   @PutMapping("{id}")
   public ${domain} edit(@PathVariable("id") Long id, @RequestBody @Valid ${domain}EditCommand command) {
+    log.info("${domain} 修改 id:{}, command:{}", id, command);
     ${domain} entity = service.findById(id);
     BeanUtils.copyPropertiesIgnoreNull(command, entity);
     return service.save(entity);
@@ -64,11 +68,13 @@ public class ${domain}Controller {
   
   @DeleteMapping("{id}")
   public void del(@PathVariable("id") Long id) {
+    log.info("${domain} 删除 id:{}", id);
     service.delete(id);
   }
   
   @DeleteMapping
   public void del(Set<Long> ids) {
+    log.info("${domain} 批量删除 ids:{}", ids);
     for (Long id : ids) {
       service.delete(id);
     }
