@@ -1,0 +1,91 @@
+plugins {
+  id 'org.springframework.boot' version '2.1.5.RELEASE'
+  id 'java'
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'top.lemna'
+//version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+  developmentOnly
+  runtimeClasspath {
+    extendsFrom developmentOnly
+  }
+  compileOnly {
+    extendsFrom annotationProcessor
+  }
+}
+ext {
+  set('springCloudVersion', "Greenwich.SR1")
+  env = System.getProperty("env") ?: "dev"
+}
+
+sourceSets {
+  main {
+    //
+    resources {
+      srcDirs = [
+        "src/main/resources/public",
+        "freemarker/main/java",
+        "freemarker/main/resources",
+        "src/main/resources/$env"
+      ]
+    }
+  }
+  test {
+    java {
+      //
+      srcDir 'src/test/java'//
+    } //
+  }
+}
+
+repositories {
+  maven { url "http://192.168.10.10:8081/repository/maven-public/" }
+  maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'top.lemna:uid-generator:0.0.2-SNAPSHOT'
+  //  implementation("org.hibernate:hibernate-validator")
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+  //  implementation 'org.springframework.boot:spring-boot-starter-security'
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.session:spring-session-data-redis'
+  implementation "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure"
+  implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.3'
+  implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.58'
+  implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+  implementation 'org.apache.commons:commons-lang3'
+  implementation 'com.aliyun.oss:aliyun-sdk-oss:2.8.3'
+  compileOnly 'org.projectlombok:lombok'
+  developmentOnly 'org.springframework.boot:spring-boot-devtools'
+  runtimeOnly 'mysql:mysql-connector-java'
+  annotationProcessor 'org.projectlombok:lombok'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.springframework.security:spring-security-test'
+  testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+  testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+  testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+  testCompile('org.mockito:mockito-junit-jupiter:2.18.3')
+  implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.29'
+  // https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core
+  compile group: 'com.github.javaparser', name: 'javaparser-core', version: '3.14.11'
+  
+}
+
+//spring boot
+dependencyManagement {
+  resolutionStrategy { cacheChangingModulesFor 0, 'seconds' }
+  //
+  imports {
+    //
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}" //
+  }//
+}
